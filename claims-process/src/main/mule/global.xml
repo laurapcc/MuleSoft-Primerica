@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:policys-api="http://www.mulesoft.org/schema/mule/policys-api" xmlns:claimss-api="http://www.mulesoft.org/schema/mule/claimss-api"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/claimss-api http://www.mulesoft.org/schema/mule/claimss-api/current/mule-claimss-api.xsd
+http://www.mulesoft.org/schema/mule/policys-api http://www.mulesoft.org/schema/mule/policys-api/current/mule-policys-api.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="5f5411cc-71d6-471b-8b10-ee714df1a0e3" file="config.yaml" />
+	<claimss-api:config name="Claims_sAPI_Config" doc:name="Claims sAPI Config" doc:id="4099d9ad-7a23-453b-ad43-886fd1bf7a12" property_host="${claims.host}" property_port="${claims.port}" property_protocol="${claims.protocol}" property_basePath="${claims.basePath}" />
+	<policys-api:config name="Policy_sAPI_Config" doc:name="Policy sAPI Config" doc:id="8b1dbfcc-e3ab-4aec-bece-df5b2d47bb37" property_host="${policies.host}" property_port="${policies.port}" property_protocol="${policies.protocol}" property_basePath="${policies.basePath}" />
+</mule>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getPoliciesByNumber" doc:id="d171cd81-5974-466f-ac1d-f57ad4fd775c" >
+		<set-variable value="#[attributes.uriParams.customerNumber]" doc:name="customerNumber" doc:id="4c39c783-b1d5-41f4-b055-1a317944abfc" variableName="customerNumber"/>
+		<sftp:read doc:name="Read" doc:id="09a75abe-2081-443a-994c-e2d0c8f10a1d" config-ref="SFTP_Config" path="upload/PrimericaPolicy.csv" outputMimeType='application/csv; separator=";"'/>
+		<ee:transform doc:name="CSV to JSON" doc:id="7cda62d3-76da-491a-ad6a-a7f4b95d185e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map(value,index) -> {
+	policyNumber: value.'Policy Number',
+	customerNumber: value.'Customer Number',
+	dateCreated: value.'Date Created',
+	coverageLevel: value.'Coverage Level',
+	expirationDate: value.'Expiration Date',
+	customerLevel: value.'Customer Level',	
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter by custometNumber" doc:id="e9198e96-3e37-440b-ad86-b1e130c1c21b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload filter (value) -> (value.customerNumber == vars.customerNumber)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ebf8ca1f-f220-4467-893e-9fbd8610674f" message="#[payload]"/>
+	</flow>
+</mule>

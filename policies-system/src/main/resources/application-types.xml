@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="policy_json" format="json">
+      <types:shape format="weave" example="examples/policyExample.json"><![CDATA[%dw 2.0
+
+type policy_json = {|
+  policyNumber: Number {"typeId": "int"}, 
+  customerNumber: String, 
+  dateCreated: String, 
+  coverageLevel: String, 
+  expirationDate: String, 
+  customerLevel: String
+|} {"example": "{\\\"policyNumber\\\":1234,\\\"customerNumber\\\":\\\"Account.010\\\",\\\"dateCreated\\\":\\\"2019-10-11\\\",\\\"coverageLevel\\\":\\\"Gold\\\",\\\"expirationDate\\\":\\\"2025-10-11\\\",\\\"customerLevel\\\":\\\"High\\\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="policy_csv" format="csv">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: array
+items:
+    properties:
+        Policy Number: integer
+        Customer Number: string
+        Date Created: date-only
+        Coverage Level: string
+        Expiration Date: date-only
+        Customer Level: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#7cda62d3-76da-491a-ad6a-a7f4b95d185e">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="policy_csv"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="policy_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getNBOALL" doc:id="668ba145-c888-4231-ae43-2283de246439" >
+		<choice doc:name="Choice" doc:id="4c0f7855-64c1-45bc-b591-6c1bb48e199c" >
+			<when expression="#[attributes.queryParams.status != null]">
+				<db:select doc:name="Select NBO Based on Status" doc:id="74aa9009-a830-41aa-9267-77a58770eac5" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT *
+FROM nba
+WHERE customernumber = :customernumber AND status = :status]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'customernumber' : attributes.uriParams.customernumber ,
+'status': attributes.queryParams.status default "Active"
+}]]]></db:input-parameters>
+		</db:select>
+				<ee:transform doc:name="Java to JSON" doc:id="d768b355-ee91-45dc-ad04-f89a46595076">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	customernumber: payload01.customernumber default "",
+	productname: payload01.productname default "",
+	productdescription: payload01.productdescription default "",
+	productdetails: payload01.productdetails default "",
+	offerexpirationdate: payload01.offerexpirationdate default "",
+	status: payload01.status default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<db:select doc:name="Select All NBO" doc:id="34034ef3-69b1-4c7d-aa0b-700c8facf133" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT *
+FROM nba
+WHERE customernumber = :customernumber]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'customernumber' : attributes.uriParams.customernumber}]]]></db:input-parameters>
+		</db:select>
+				<ee:transform doc:name="Java to JSON" doc:id="fa8618f2-ce89-4310-95b1-ae73b8d4051f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	customernumber: payload01.customernumber default "Account.050",
+	productname: payload01.productname default "Family Insurance Package",
+	productdescription: payload01.productdescription default "This product includes limited offer for all family members medical coverage",
+	productdetails: payload01.productdetails default "P-024455",
+	offerexpirationdate: payload01.offerexpirationdate default "2021-08-02",
+	status: payload01.status default "Active"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="e7861780-41cc-48e9-ab2e-d916920ac3a3" message="#[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="cb9bf307-ea68-4366-af83-695024791601" >
+				<set-payload value='#["Wrong request"]' doc:name='"Wrong request"' doc:id="2c383301-e238-49a7-96b5-28c4976be8e4" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,11 @@
+claims:
+  basepath: ""
+  port: ""
+  host: ""
+  protocol: ""
+
+NBO:
+  basepath: ""
+  port: ""
+  host: ""
+  protocol: ""

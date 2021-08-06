@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:nbo="http://www.mulesoft.org/schema/mule/nbo" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:policys-api="http://www.mulesoft.org/schema/mule/policys-api"
+	xmlns:claimss-api="http://www.mulesoft.org/schema/mule/claimss-api" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/claimss-api http://www.mulesoft.org/schema/mule/claimss-api/current/mule-claimss-api.xsd
+http://www.mulesoft.org/schema/mule/policys-api http://www.mulesoft.org/schema/mule/policys-api/current/mule-policys-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/nbo http://www.mulesoft.org/schema/mule/nbo/current/mule-nbo.xsd">
+	<flow name="getClaimsByCode" doc:id="cbe8dc00-52df-46d6-988e-e8507718c074" >
+		<set-variable value="#[attributes.uriParams.customerCode]" doc:name="customerCode" doc:id="3e76bae5-9d22-494b-88a5-bb0a9af76c4e" variableName="customerCode"/>
+		<set-variable value="#[attributes.queryParams.status]" doc:name="status" doc:id="c753dfc9-f2bf-466c-8f9b-407f580f6a87" variableName="status"/>
+		<claimss-api:get-claim-by-customer-code doc:name="Get claim by customer code" doc:id="a982d868-bce7-4773-b60f-ccf9b61e5dd5" customer-code="#[vars.customerCode]" status="#[vars.status]" config-ref="Claims_sAPI_Config" target="claims"/>
+		<policys-api:get-policy-by-customer-number doc:name="Get policy by customer number" doc:id="dcd9f0a8-0ab1-4d85-bb2c-62fe6eb26cfb" config-ref="Policy_sAPI_Config" customer-number="#[vars.customerCode]" target="policies"/>
+		<ee:transform doc:name="Transform Message" doc:id="d2feab95-84b1-4a94-b89d-5f9a65657d4a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.claims map (claim) -> {
+    customerCode: claim.customerCode,
+    claimNumber: claim.claimNumber,
+    claimStatus: claim.claimStatus,
+    requestedAmount: claim.requestedAmount,
+    paidAmount: claim.paidAmount,
+    openDate: claim.openDate,
+    closeDate: claim.closeDate,
+    policyNumber: claim.policyNumber,
+    (vars.policies filter ($.policyNumber == claim.policyNumber) map (policy) -> {
+        coverageLevel: policy.coverageLevel,
+        customerLevel: policy.customerLevel
+    })
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8f8d6cdd-2e2c-496c-8f01-b0f37558ff0d" message="#[payload]" />
+	</flow>
+</mule>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:nbo="http://www.mulesoft.org/schema/mule/nbo" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/nbo http://www.mulesoft.org/schema/mule/nbo/current/mule-nbo.xsd">
+	<flow name="NBO-p-Api-GetNBO" doc:id="5137da9b-89e3-4c34-b21d-21a555dc71af" >
+		<nbo:get-nbo-by-customernumber doc:name="Get nbo by customernumber" doc:id="b5fa7518-b60a-4821-bec6-87c3dc4de81f" config-ref="NBO_Config" customernumber="#[attributes.uriParams.customernumber]" status="#[attributes.queryParams.status]"/>
+		<ee:transform doc:name="Transform Message" doc:id="9f4c54b8-8d81-47b3-af5e-ae0f66ce8e90" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	customerCode: payload01.customernumber,
+	productname: payload01.productname default "",
+	productdescription: payload01.productdescription default "",
+	productdetails: payload01.productdetails default "",
+	offerexpirationdate: payload01.offerexpirationdate default "",
+	status: payload01.status
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

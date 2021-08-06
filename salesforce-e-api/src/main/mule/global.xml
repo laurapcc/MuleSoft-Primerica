@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:nbo="http://www.mulesoft.org/schema/mule/nbo"
+	xmlns:claimsp-api="http://www.mulesoft.org/schema/mule/claimsp-api"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/claimsp-api http://www.mulesoft.org/schema/mule/claimsp-api/current/mule-claimsp-api.xsd
+http://www.mulesoft.org/schema/mule/nbo http://www.mulesoft.org/schema/mule/nbo/current/mule-nbo.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<claimsp-api:config name="Claims_pAPI_Config" doc:name="Claims pAPI Config" doc:id="ff9a20af-0432-4d48-ae4a-2cf76e24a327" property_host="${claims.host}" property_port="${claims.port}" property_protocol="${claims.protocol}" property_basePath="${claims.basepath}" />
+	<configuration-properties doc:name="Configuration properties" doc:id="1127d69d-ecb5-430d-9c83-3a22f62a8e56" file="config.yaml" />
+	<nbo:config name="NBO_Config" doc:name="NBO Config" doc:id="6ee7ba0c-8264-4956-93fa-4453317eda4b" property_host="${NBO.host}" property_port="${NBO.port}" property_protocol="${NBO.protocol}" property_basePath="${NBO.basepath}" />
+	<api-gateway:autodiscovery apiId="17082379" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0240df3f-f813-4a1d-a082-0981bf704fdc" flowRef="salesforce-eapi-main" />
+</mule>

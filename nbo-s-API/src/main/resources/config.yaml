@@ -1,0 +1,8 @@
+database:
+  URL: ""
+  host: ""
+  port: ""
+  username: ""
+  databaseName: ""
+  password: ""
+  rootPassword: ""

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="NBOProcess" format="json">
+      <types:shape format="weave" example="examples/NBOProcess.JSON"><![CDATA[%dw 2.0
+
+type NBOProcess = Array<{|  customerCode: String,   productname: String,   productdescription: String,   productdetails: String,   offerexpirationdate: String,   status: String|}> {"example": "[{\\\"customerCode\\\":\\\"Account.050\\\",\\\"productname\\\":\\\"Family Insurance Package\\\",\\\"productdescription\\\":\\\"This product includes limited offer for all family members medical coverage\\\",\\\"productdetails\\\":\\\"P-024455\\\",\\\"offerexpirationdate\\\":\\\"2021-08-02\\\",\\\"status\\\":\\\"Active\\\"},{\\\"customerCode\\\":\\\"Account.050\\\",\\\"productname\\\":\\\"Dental Insurance\\\",\\\"productdescription\\\":\\\"This product includes unlimited dental care for family members\\\",\\\"productdetails\\\":\\\"P-024455\\\",\\\"offerexpirationdate\\\":\\\"2021-02-02\\\",\\\"status\\\":\\\"Inactive\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#9f4c54b8-8d81-47b3-af5e-ae0f66ce8e90">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="NBOProcess"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

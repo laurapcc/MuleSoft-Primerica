@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:claimsp-api="http://www.mulesoft.org/schema/mule/claimsp-api"
+	xmlns:nbo="http://www.mulesoft.org/schema/mule/nbo"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/nbo http://www.mulesoft.org/schema/mule/nbo/current/mule-nbo.xsd
+http://www.mulesoft.org/schema/mule/claimsp-api http://www.mulesoft.org/schema/mule/claimsp-api/current/mule-claimsp-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getClaims" doc:id="50214614-3f44-47e1-9840-ec8e12857928" >
+		<claimsp-api:get-claim-by-customer-code doc:name="Get claim by customer code" doc:id="7dd5ef51-8053-4bca-a46c-78195d66ca17" config-ref="Claims_pAPI_Config" customer-code="#[attributes.uriParams.customerCode]" status="#[attributes.queryParams.status]"/>
+		<ee:transform doc:name="Transform Message" doc:id="77685b04-ec02-4786-ad5a-d2dea4064ee6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e4b80c3c-7e40-46f9-b202-06fa994307fd" message="#[payload]"/>
+	</flow>
+	<flow name="getNBO" doc:id="89a2d212-e696-4d8e-814e-ad3d1ed46308" >
+		<nbo:get-nbo-by-customernumber doc:name="Get nbo by customernumber" doc:id="0064f992-23a7-4360-8f64-27dd442ac76f" customernumber="#[attributes.uriParams.customerCode]" config-ref="NBO_Config" status="#[attributes.queryParams.status]"/>
+		<ee:transform doc:name="Transform Message" doc:id="ec11811c-7c7e-4d5a-8f07-61c967cf0344" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5bd5dd4f-8aeb-40dc-aa55-02ba33b087f7" message="#[payload]"/>
+	</flow>
+</mule>

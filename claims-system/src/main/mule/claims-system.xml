@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getClaimsByCode" doc:id="2339317e-9e87-4839-b1a1-37c067a8ac37" >
+		<set-variable value="#[attributes.queryParams.'status' default &quot;&quot;]" doc:name="status" doc:id="47385ea8-b222-4808-93d6-df13e58411ff" variableName="status"/>
+		<set-variable value="#[['Opened','In-Review','Closed']]" doc:name="statusEnum" doc:id="5c9cd7fe-a8d9-42fa-ab00-f4fd0f79c65f" variableName="statusEnum"/>
+		<choice doc:name="Choice" doc:id="d888ccde-686d-4bae-8ddc-8d2bbac350dd" >
+			<when expression="#[vars.statusEnum contains vars.status]">
+				<db:select doc:name="Select" doc:id="6f36852b-b868-4ba4-bd94-c1856aedb2c5" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM claims WHERE
+customerCode = :customerCode AND
+claimStatus = :claimStatus]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'customerCode': attributes.uriParams.customerCode as String default "",
+	'claimStatus': vars.status
+}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<otherwise >
+				<db:select doc:name="Select" doc:id="ce0b09fa-ba37-437e-962a-a44f5e360276" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM claims WHERE
+customerCode = :customerCode]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'customerCode': attributes.uriParams.customerCode as String default ""}]]]></db:input-parameters>
+		</db:select>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Java to JSON" doc:id="41c30a11-c40d-4953-ae07-bfd9a443b2db" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="payload" doc:id="8362b211-bef3-431b-8fa8-70831e348bc8" message="#[payload]"/>
+	</flow>
+</mule>

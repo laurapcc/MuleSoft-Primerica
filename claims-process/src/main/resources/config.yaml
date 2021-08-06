@@ -1,0 +1,11 @@
+claims:
+  host: ""
+  port: "80"
+  basePath: ""
+  protocol: "HTTP"
+  
+policies:
+  host: ""
+  port: "80"
+  basePath: ""
+  protocol: "HTTP"

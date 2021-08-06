@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:nbo="http://www.mulesoft.org/schema/mule/nbo" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/nbo http://www.mulesoft.org/schema/mule/nbo/current/mule-nbo.xsd">
+	<nbo:config name="NBO_Config" doc:name="NBO Config" doc:id="c8ce4d47-e58e-4016-a478-95909893abb6" property_host="${NBO.host}" property_port="${NBO.port}" property_protocol="${NBO.protocol}" property_basePath="${NBO.basepath}" />
+	<configuration-properties doc:name="Configuration properties" doc:id="fe8a09bd-a478-4f60-9e09-6eaad9005787" file="config.yaml" />
+
+
+
+</mule>
